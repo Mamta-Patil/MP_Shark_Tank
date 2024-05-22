@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Card</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="mainSection"></div>
+</body>
+</html>
+<script>
+
+function fetchdata() {
+  fetch("https://mp-addtocard.onrender.com/cart")
+    .then((res) => res.json())
+    .then((data) => {
+      datalist(data)
+      productdata = data
+    })
+    .catch((err) => console.log(err))
+}
+fetchdata()
+
+function datalist(data) {
+  let store = data.map((el) =>
+    singledata(el.id, el.image, el.title, el.price, el.founder, el.category,el.description))
+  document.getElementById("mainSection").innerHTML = store.join("")
+  console.log(store)
+}
+
+function singledata(id, image, title, price, founder, category,description) {
+  let data = `
+    <div class="card" data-id="${id}">
+    <div class="card-img">
+      <img src="${image}" alt="" height="250px" width="250px">
+    </div>
+    <div class="card-body">
+      <h4 class="card-title">${title}</h4>
+      <p class="card-founder">${founder}</p>
+      <p class="card-category">${category}</p>
+      <p class="card-price">${price}</p>
+      <p class="card-description">${description}</p>
+      <button class="card-button" data-id="${id}">Delete</button>
+    </div>
+  </div>
+`
+  return data;
+}
+
+// Delete part
+document.addEventListener("click", (el) => {
+  if (el.target.classList.contains("card-button")) {
+    Deleteproduct(el.target.dataset.id)
+  }
+})
+
+function Deleteproduct(id) {
+  fetch(`https://mp-addtocard.onrender.com/cart/${id}`, {
+    method: "DELETE"
+
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      alert("data deleted scucceessfully")
+      fetchdata()
+    })
+    .catch((err) => console.log(err))
+}
+
+
+
+</script>
+
+
